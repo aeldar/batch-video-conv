@@ -6,6 +6,8 @@ SOURCEDIR="/tmp/video/source"
 WORKDIR="/tmp/video/processing"
 RESULTDIR="/tmp/video/result"
 FINISHDIR="$SOURCEDIR/finished"
+HANDBRAKE="/usr/bin/HandBrakeCLI"
+ACTION="$HANDBRAKE -e x264 -q 22 -r 25 -B 64 -X 720 -O"
 PIDFILE="/var/run/video-convert.pid"
 
 # Directory check and create
@@ -30,10 +32,14 @@ trap 'cleanup; exit 1;' HUP INT TERM
 
 ## Do something here
 echo "Start processing directory $SOURCEDIR"
-for FILENAME in $SOURCEDIR/*
+for FULLFILENAME in $SOURCEDIR/*
 do
-  [ -d "$FILENAME" ] && continue
-  echo $FILENAME
+  [ -d "$FULLFILENAME" ] && continue
+  DATE=`date +%s`
+  FILENAME=`basename $FULLFILENAME | tr '.' '_'`
+  OUT="${WORKDIR}/${FILENAME}_${DATE}.mp4"
+  echo "$ACTION -i $FULLFILENAME -o $OUT"
+
 done
 
 # before exit
