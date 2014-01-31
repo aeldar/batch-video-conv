@@ -32,15 +32,15 @@ cleanup() {
 trap 'cleanup; exit 1;' HUP INT TERM
 
 ## Do something here
-echo "Start processing directory $SOURCEDIR"
+echo "Starting to process directory $SOURCEDIR..."
 for FULLFILENAME in $SOURCEDIR/*
 do
   [ -d "$FULLFILENAME" ] && continue
-  [ -w "$FULLFILENAME" ] || { echo "Cannot move $FULLFILENAME, so I will ignore it" && continue; }
+  [ -w "$FULLFILENAME" ] || { echo "Cannot move $FULLFILENAME. Ignoring it (no convert) and continue." && continue; }
   DATE=`date +%s`
   FILENAME=`basename $FULLFILENAME | tr '.' '_'`
   OUT="${WORKDIR}/${FILENAME}_${DATE}.mp4"
-  echo "Trying to convert $FULLFILENAME to $OUT"
+  echo "Trying to convert `basename $FULLFILENAME` to `basename $OUT`"
   $ACTION -i $FULLFILENAME -o $OUT > /dev/null 2>&1
   if [ "$?" -eq 0 ]
     then
@@ -48,12 +48,12 @@ do
       if [ -f $OUT ]
         then
           mv $OUT $RESULTDIR
-          echo "Successfully converted $FULLFILENAME to $RESULTDIR/$OUT"
+          echo "Successfully converted `basename $FULLFILENAME` to $RESULTDIR/`basename $OUT`"
         else
-          echo "Cannot find the result of converting $FILENAME. Probably, it was not a video file. Ignore and continue anyway."
+          echo "Cannot find the result of converting `basename $FULLFILENAME`. Probably, it was not a video file. Ignoring it and continue anyway."
       fi
     else
-      echo "Failed. Something went wrong with HandBrake. Shit. But I continue with other files anyway."
+      echo "Failed. Something went wrong with HandBrake. Shit. But I am going to continue with the rest of files anyway."
   fi
 done
 
