@@ -21,6 +21,7 @@ PIDFILE="/var/run/video-convert.pid"
 
 # create pid file
 echo $$ > $PIDFILE
+[ "$?" -eq 0 ] || { echo "Cannot create pidfile. Exit!" && exit 1; }
 
 # cleanup before exit
 cleanup() {
@@ -35,11 +36,20 @@ echo "Start processing directory $SOURCEDIR"
 for FULLFILENAME in $SOURCEDIR/*
 do
   [ -d "$FULLFILENAME" ] && continue
+  [ -w "$FULLFILENAME" ] || { echo "Cannot move $FULLFILENAME, so I will ignore it" && continue; }
   DATE=`date +%s`
   FILENAME=`basename $FULLFILENAME | tr '.' '_'`
   OUT="${WORKDIR}/${FILENAME}_${DATE}.mp4"
-  echo "$ACTION -i $FULLFILENAME -o $OUT"
-
+  echo "DEBUG: $ACTION -i $FULLFILENAME -o $OUT" # Debug
+  #$ACTION -i $FULLFILENAME -o $OUT
+  if [ "$?" -eq 0 ]
+    then
+      echo mv $FULLFILENAME $FINISHDIR
+      echo mv $OUT $RESULTDIR
+      echo "Successfully converted $FULLFILENAME to $RESULTDIR/$FILENAME"
+    else
+      echo "Failed. Something went wrong with HandBrake. Shit. But I continue with other files anyway."
+  fi
 done
 
 # before exit
