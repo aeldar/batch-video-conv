@@ -40,7 +40,7 @@ do
   DATE=`date +%s`
   FILENAME=`basename $FULLFILENAME | tr '.' '_'`
   OUT="${WORKDIR}/${FILENAME}_${DATE}.mp4"
-  echo "DEBUG: $ACTION -i $FULLFILENAME -o $OUT" # Debug
+  echo "Trying to convert $FULLFILENAME to $OUT"
   $ACTION -i $FULLFILENAME -o $OUT > /dev/null 2>&1
   if [ "$?" -eq 0 ]
     then
