@@ -45,8 +45,13 @@ do
   if [ "$?" -eq 0 ]
     then
       mv $FULLFILENAME $FINISHDIR
-      mv $OUT $RESULTDIR
-      echo "Successfully converted $FULLFILENAME to $RESULTDIR/$FILENAME"
+      if [ -f $OUT ]
+        then
+          mv $OUT $RESULTDIR
+          echo "Successfully converted $FULLFILENAME to $RESULTDIR/$OUT"
+        else
+          echo "Cannot find the result of converting $FILENAME. Probably, it was not a video file. Ignore and continue anyway."
+      fi
     else
       echo "Failed. Something went wrong with HandBrake. Shit. But I continue with other files anyway."
   fi
