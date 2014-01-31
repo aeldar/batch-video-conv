@@ -41,11 +41,11 @@ do
   FILENAME=`basename $FULLFILENAME | tr '.' '_'`
   OUT="${WORKDIR}/${FILENAME}_${DATE}.mp4"
   echo "DEBUG: $ACTION -i $FULLFILENAME -o $OUT" # Debug
-  #$ACTION -i $FULLFILENAME -o $OUT
+  $ACTION -i $FULLFILENAME -o $OUT > /dev/null 2>&1
   if [ "$?" -eq 0 ]
     then
-      echo mv $FULLFILENAME $FINISHDIR
-      echo mv $OUT $RESULTDIR
+      mv $FULLFILENAME $FINISHDIR
+      mv $OUT $RESULTDIR
       echo "Successfully converted $FULLFILENAME to $RESULTDIR/$FILENAME"
     else
       echo "Failed. Something went wrong with HandBrake. Shit. But I continue with other files anyway."
